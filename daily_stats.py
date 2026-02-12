@@ -290,36 +290,35 @@ def write_text_report(players, games, window):
     lines = ["═══ CAMELOT CANIACS OLYMPIC UPDATE ═══", f"Window: {window}\n"]
     lines.append("GAMES PLAYED:")
     for g in games:
-        # Simplified game line
         lines.append(f" - {g.get('awayTeam',{}).get('abbrev')} @ {g.get('homeTeam',{}).get('abbrev')} (FINAL)")
     
-    # Team Grouping
     teams = defaultdict(list)
     for p in players: teams[p["FantasyTeam"]].append(p)
     
-    # Sort Teams by Total Daily Pts
     team_sums = sorted([(t, sum(x['DailyPts'] for x in m)) for t, m in teams.items()], key=lambda x: (-x[1], x[0]))
     
     lines.append("\nTEAM DAILY TOTALS:")
     for team, total in team_sums:
         lines.append(f"{team} — Daily: {total:.1f}")
         lines.append("-" * 65)
-        lines.append(f"{'Player':20} | {'Stats':25} | Daily | Total")
-        # Sort players by daily pts
+        lines.append(f"{'Player':20} | {'Stats':28} | Daily | Total")
         for p in sorted(teams[team], key=lambda x: -x['DailyPts']):
             s = p['Stats']
+            # GOALIE DISPLAY FIX:
             if s.get('SV') or s.get('GA'):
-                stat = f"W:{s['W']} SV:{s['SV']} GA:{s['GA']}"
+                stat = f"W:{int(s.get('W',0))} SV:{int(s.get('SV',0))} GA:{int(s.get('GA',0))}"
+                if s.get('SO', 0) > 0:
+                    stat += f" SO:{int(s['SO'])}"
             else:
-                stat = f"{s['G']}G {s['A']}A SOG:{s['SOG']}"
-            lines.append(f"{p['Player'][:20]:20} | {stat:25} | {p['DailyPts']:5.1f} | {p['TotalPts']:5.1f}")
+                stat = f"{int(s.get('G',0))}G {int(s.get('A',0))}A SOG:{int(s.get('SOG',0))}"
+            
+            lines.append(f"{p['Player'][:20]:20} | {stat:28} | {p['DailyPts']:5.1f} | {p['TotalPts']:5.1f}")
         lines.append("")
         
     with open(REPORT_TXT, "w") as f: f.write("\n".join(lines))
     print(f"Report written to {REPORT_TXT}")
 
 def write_html_report(players, games, window):
-    # Basic HTML structure
     html = f"""<html><head><style>
     body{{font-family:sans-serif; padding:20px}} table{{border-collapse:collapse; width:100%}} 
     th,td{{border:1px solid #ddd; padding:8px; text-align:left}} th{{background-color:#f2f2f2}}
@@ -334,7 +333,14 @@ def write_html_report(players, games, window):
         html += f"<div class='team'><b>{team}</b> - Daily: {total:.1f}</div><table><tr><th>Player</th><th>Stats</th><th>Daily</th><th>Total</th></tr>"
         for p in sorted(teams[team], key=lambda x: -x['DailyPts']):
              s = p['Stats']
-             stat = f"W:{s['W']} SV:{s['SV']} GA:{s['GA']}" if (s.get('SV') or s.get('GA')) else f"{s['G']}G {s['A']}A {s['SOG']}SOG"
+             # GOALIE DISPLAY FIX:
+             if s.get('SV') or s.get('GA'):
+                 stat = f"W:{int(s.get('W',0))} SV:{int(s.get('SV',0))} GA:{int(s.get('GA',0))}"
+                 if s.get('SO', 0) > 0:
+                     stat += f" <b>SO:{int(s['SO'])}</b>"
+             else:
+                 stat = f"{int(s.get('G',0))}G {int(s.get('A',0))}A {int(s.get('SOG',0))}SOG"
+             
              html += f"<tr><td>{p['Player']}</td><td>{stat}</td><td>{p['DailyPts']:.1f}</td><td>{p['TotalPts']:.1f}</td></tr>"
         html += "</table>"
     
