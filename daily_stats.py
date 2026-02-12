@@ -112,7 +112,7 @@ def parse_boxscore_for_players(box: dict) -> List[dict]:
     rows = []
     if not box: return rows
     
-    # Extract from playerByGameStats (common in new API)
+    # 1. Try "playerByGameStats" (New API Format)
     pbg = box.get("playerByGameStats")
     if pbg:
         for side in ("awayTeam", "homeTeam"):
@@ -135,9 +135,54 @@ def parse_boxscore_for_players(box: dict) -> List[dict]:
                 row = {"Player": name, "G":0, "A":0, "PPP":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
                 row["GA"] = g.get("goalsAgainst", 0)
                 row["SV"] = g.get("saves", 0)
-                if (g.get("decision") or "").upper() == "W": row["W"] = 1
-                if row["GA"] == 0 and g.get("toi", "00:00") > "59:00": row["SO"] = 1
+                
+                # Decision: Check explicitly for "W"
+                if (g.get("decision") or "").upper() == "W": 
+                    row["W"] = 1
+                
+                # ROBUST SHUTOUT LOGIC:
+                # If you Won, allowed 0 goals, and made at least 1 save, it's a Shutout.
+                # This ignores 'toi' parsing issues.
+                if row["GA"] == 0 and row["W"] == 1 and row["SV"] > 0:
+                    row["SO"] = 1
+                
                 rows.append(row)
+
+    # 2. Fallback for "boxscore" / "teams" (Old API Format)
+    elif "teams" in box:
+        teams = box.get("teams")
+        for side in ("away", "home"):
+            team = teams.get(side) or {}
+            players = team.get("players") or {}
+            for pid, pinfo in players.items():
+                person = pinfo.get("person") or {}
+                name = person.get("fullName") or "Unknown"
+                stats = (pinfo.get("stats") or {}).get("skaterStats")
+                goalie_stats = (pinfo.get("stats") or {}).get("goalieStats")
+                
+                row = {"Player": name, "G":0, "A":0, "PPP":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
+                
+                if stats:
+                    row["G"] = stats.get("goals", 0)
+                    row["A"] = stats.get("assists", 0)
+                    row["PPP"] = stats.get("powerPlayGoals", 0) + stats.get("powerPlayAssists", 0)
+                    row["SOG"] = stats.get("shots", 0)
+                    row["HIT"] = stats.get("hits", 0)
+                    row["BLK"] = stats.get("blocked", 0)
+                    rows.append(row)
+                
+                elif goalie_stats:
+                    row["GA"] = goalie_stats.get("goalsAgainst", 0)
+                    row["SV"] = goalie_stats.get("saves", 0)
+                    # Old API decision is sometimes missing, check stats
+                    if (goalie_stats.get("decision") or "").upper() == "W":
+                         row["W"] = 1
+                    
+                    # Robust Shutout Check
+                    if row["GA"] == 0 and row["W"] == 1 and row["SV"] > 0:
+                        row["SO"] = 1
+                    rows.append(row)
+                    
     return rows
 
 def aggregate_by_player(rows: List[dict]) -> Dict[str, dict]:
