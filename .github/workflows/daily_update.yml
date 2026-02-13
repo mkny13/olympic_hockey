@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TZ: America/New_York  # <--- Add this line here
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
