@@ -1,6 +1,6 @@
 ═══ CAMELOT CANIACS OLYMPIC UPDATE ═══
 Daily Report for 2026-02-12
-Last Updated: 2026-02-13 05:04 PM ET
+Last Updated: 2026-02-13 05:09 PM ET
 
 YESTERDAY'S GAMES:
  - SUI (4) @ FRA (0) (FINAL)
@@ -17,7 +17,7 @@ TOP 5 STARS OF THE DAY:
 
 Tkachuk Norris — Daily: 17.2
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Jordan Binnington    | W:1 SV:26 GA:0                 |  12.2 |  12.2
 Jack Eichel          | 0G 2A 0S                       |   2.0 |   2.0
 Nick Suzuki          | 1G 0A 0S                       |   2.0 |   2.0
@@ -31,7 +31,7 @@ Sam Bennett          | 0G 0A 0S                       |   0.0 |   0.0
 
 Sega Genesis NHL '94 All Stars — Daily: 8.4
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Connor Hellebuyck    | W:1 SV:17 GA:1                 |   5.4 |   5.4
 Thomas Harley        | 0G 2A 0S                       |   2.0 |   2.0
 Moritz Seider        | 0G 1A 0S                       |   1.0 |   1.0
@@ -54,7 +54,7 @@ Adam Fox             | -                              |   0.0 |   0.0
 
 Winos Chasing Ginos — Daily: 8.0
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Tim Stutzle          | 2G 0A 0S                       |   4.5 |   4.5
 Nathan MacKinnon     | 1G 0A 0S                       |   2.5 |   2.5
 Kevin Fiala          | 0G 1A 0S                       |   1.0 |   1.0
@@ -67,7 +67,7 @@ Darcy Kuemper        | -                              |   0.0 |   0.0
 
 Janie's Got A Puck — Daily: 7.8
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Timo Meier           | 2G 0A 0S                       |   4.0 |   4.0
 Bo Horvat            | 1G 0A 0S                       |   2.0 |   2.0
 Brad Marchand        | 0G 1A 0S                       |   1.0 |   1.0
@@ -83,7 +83,7 @@ Clayton Keller       | W:0 SV:39 GA:4                 |  -0.2 |  -0.2
 
 That's So Svech — Daily: 5.5
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Auston Matthews      | 1G 0A 0S                       |   2.5 |   2.5
 Macklin Celebrini    | 1G 0A 0S                       |   2.0 |   2.0
 Vincent Trocheck     | 0G 1A 0S                       |   1.0 |   1.0
@@ -106,7 +106,7 @@ Logan Cooley         | -                              |   0.0 |   0.0
 
 Is Bobby Orr Available? — Daily: 5.0
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Leon Draisaitl       | 1G 1A 0S                       |   3.0 |   3.0
 Mark Stone           | 1G 0A 0S                       |   2.0 |   2.0
 Rickard Rakell       | -                              |   0.0 |   1.0
@@ -122,7 +122,7 @@ Anton Lundell        | -                              |   0.0 |   0.0
 
 Stankoven's Army — Daily: 4.0
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Connor McDavid       | 0G 3A 0S                       |   3.0 |   3.0
 Mitch Marner         | 0G 1A 0S                       |   1.0 |   1.0
 Rasmus Dahlin        | -                              |   0.0 |   3.0
@@ -135,7 +135,7 @@ Juuse Saros          | -                              |   0.0 |  -1.8
 
 Tifftastic Voyagers — Daily: 3.0
 ---------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
+Player               | Stats for Feb 12               | Daily | Total
 Sidney Crosby        | 0G 2A 0S                       |   2.0 |   2.0
 Roman Josi           | 0G 1A 0S                       |   1.0 |   1.0
 Mika Zibanejad       | -                              |   0.0 |   3.0
