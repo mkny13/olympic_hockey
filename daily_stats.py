@@ -20,6 +20,7 @@ import unicodedata
 import re
 import requests
 import argparse
+from zoneinfo import ZoneInfo
 
 # --- Paths / Config ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -272,8 +273,21 @@ def generate_report(roster, scoring, report_date_str, finished_games, boxscore_m
     write_html_report(final_player_list, finished_games, report_date_str, tomorrow_games_list)
     push_to_github()
 
+def format_game_time(utc_str: str) -> str:
+    """Converts NHL API UTC time string to formatted Eastern Time."""
+    if not utc_str:
+        return "TBD"
+    try:
+        # Parse ISO format (handling Z for UTC)
+        dt_utc = datetime.fromisoformat(utc_str.replace("Z", "+00:00"))
+        # Convert to NY time
+        dt_ny = dt_utc.astimezone(ZoneInfo("America/New_York"))
+        return dt_ny.strftime('%I:%M %p ET')
+    except (ValueError, TypeError):
+        return utc_str
+
 def write_text_report(players, games, report_date_str, upcoming):
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    now_str = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %I:%M %p ET") # Updated header time too
     lines = ["═══ CAMELOT CANIACS OLYMPIC UPDATE ═══"]
     lines.append(f"Daily Report for {report_date_str}")
     lines.append(f"Last Updated: {now_str}\n")
@@ -282,6 +296,7 @@ def write_text_report(players, games, report_date_str, upcoming):
     if not games:
         lines.append(" (No completed games found for this date)")
     for g in games:
+        # Use helper here if you want yesterday's game times in ET too, otherwise keep as is
         lines.append(f" - {g.get('awayTeam',{}).get('abbrev')} @ {g.get('homeTeam',{}).get('abbrev')} (FINAL)")
     
     teams = defaultdict(list)
@@ -342,13 +357,85 @@ def write_text_report(players, games, report_date_str, upcoming):
     for g in upcoming:
         away = g.get('awayTeam', {}).get('abbrev') or "???"
         home = g.get('homeTeam', {}).get('abbrev') or "???"
-        start = g.get('startTimeUTC', 'TBD')
-        lines.append(f" - {away} vs {home} ({start})")
+        # --- CHANGED HERE ---
+        start_utc = g.get('startTimeUTC')
+        start_et = format_game_time(start_utc)
+        lines.append(f" - {away} vs {home} ({start_et})")
         
     with open(REPORT_TXT, "w") as f: f.write("\n".join(lines))
     print(f"Report written to {REPORT_TXT}")
 
 def write_html_report(players, games, report_date_str, upcoming):
+    now_str = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %I:%M %p ET") # Updated header
+    html = f"""<html><head><style>
+    body{{font-family:sans-serif; padding:20px; max-width:800px; margin:0 auto;}} 
+    table{{border-collapse:collapse; width:100%}} 
+    th,td{{border:1px solid #ddd; padding:8px; text-align:left}} th{{background-color:#f2f2f2}}
+    .team{{background:#333; color:white; padding:10px; margin-top:20px}}
+    .header{{margin-bottom:20px; border-bottom:2px solid #333; padding-bottom:10px;}}
+    .standings{{background:#eef; padding:15px; margin-bottom:20px; border-radius:5px;}}
+    .top5{{background:#fff3cd; padding:15px; margin-bottom:20px; border-radius:5px;}}
+    </style></head><body>
+    
+    <div class="header">
+        <h1>Camelot Caniacs Olympic Update</h1>
+        <p><b>Report Date:</b> {report_date_str} | <b>Last Updated:</b> {now_str}</p>
+    </div>
+    """
+    
+    html += "<div class='top5'><h3>⭐ Top 5 Stars of the Day</h3><ul>"
+    active_today = [p for p in players if p['DailyPts'] > 0]
+    all_sorted = sorted(active_today, key=lambda x: -x['DailyPts'])
+    if not all_sorted:
+        html += "<li>No points scored today.</li>"
+    else:
+        for p in all_sorted[:5]:
+            html += f"<li><b>{p['Player']}</b> ({p['FantasyTeam']}) - {p['DailyPts']:.1f} pts</li>"
+    html += "</ul></div>"
+    
+    html += "<div class='standings'><h3>🏆 Overall Standings</h3><ol>"
+    team_season_sums = defaultdict(float)
+    for p in players: team_season_sums[p['FantasyTeam']] += p['TotalPts']
+    sorted_standings = sorted(team_season_sums.items(), key=lambda x: -x[1])
+    for team, pts in sorted_standings:
+        html += f"<li><b>{team}</b>: {pts:.1f}</li>"
+    html += "</ol></div>"
+
+    teams = defaultdict(list)
+    for p in players: teams[p["FantasyTeam"]].append(p)
+    team_sums = sorted([(t, sum(x['DailyPts'] for x in m)) for t, m in teams.items()], key=lambda x: (-x[1], x[0]))
+    
+    html += "<h2>Daily Performance</h2>"
+    for team, total in team_sums:
+        html += f"<div class='team'><b>{team}</b> - Daily: {total:.1f}</div><table><tr><th>Player</th><th>Stats (Today)</th><th>Daily</th><th>Total</th></tr>"
+        for p in sorted(teams[team], key=lambda x: (-x['DailyPts'], -x['TotalPts'])):
+             s = p['Stats']
+             stat_str = "-"
+             if s.get('SV') or s.get('GA') or s.get('W') or s.get('OTL'):
+                 stat_str = f"W:{int(s.get('W',0))} SV:{int(s.get('SV',0))} GA:{int(s.get('GA',0))}"
+                 if s.get('SO', 0) > 0: stat_str += f" <b>SO:{int(s['SO'])}</b>"
+                 if s.get('OTL', 0) > 0: stat_str += f" OTL:{int(s['OTL'])}"
+             elif any(s.values()):
+                 stat_str = f"{int(s.get('G',0))}G {int(s.get('A',0))}A {int(s.get('SOG',0))}S"
+                 if s.get('PPP'): stat_str += f" {int(s.get('PPP'))}PPP"
+                 if s.get('HIT'): stat_str += f" {int(s.get('HIT'))}H"
+                 if s.get('BLK'): stat_str += f" {int(s.get('BLK'))}B"
+             
+             html += f"<tr><td>{p['Player']}</td><td>{stat_str}</td><td>{p['DailyPts']:.1f}</td><td>{p['TotalPts']:.1f}</td></tr>"
+        html += "</table>"
+    
+    html += "<h3>📅 Upcoming Schedule (Today)</h3><ul>"
+    if not upcoming: html += "<li>No games scheduled</li>"
+    for g in upcoming:
+        away = g.get('awayTeam', {}).get('abbrev') or "???"
+        home = g.get('homeTeam', {}).get('abbrev') or "???"
+        # --- CHANGED HERE ---
+        start_utc = g.get('startTimeUTC')
+        start_et = format_game_time(start_utc)
+        html += f"<li>{away} vs {home} ({start_et})</li>"
+    html += "</ul></body></html>"
+
+    with open(REPORT_HTML, "w") as f: f.write(html)
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     html = f"""<html><head><style>
     body{{font-family:sans-serif; padding:20px; max-width:800px; margin:0 auto;}} 
