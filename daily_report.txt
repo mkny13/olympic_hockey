@@ -1,12 +1,12 @@
 ═══ CAMELOT CANIACS OLYMPIC UPDATE ═══
 Daily Report for 2026-02-12
-Last Updated: 2026-02-13 04:41 PM ET
+Last Updated: 2026-02-13 04:48 PM ET
 
 YESTERDAY'S GAMES:
- - SUI @ FRA (FINAL)
- - CZE @ CAN (FINAL)
- - LAT @ USA (FINAL)
- - GER @ DEN (FINAL)
+ - SUI (4) @ FRA (0) (FINAL)
+ - CZE (0) @ CAN (5) (FINAL)
+ - LAT (1) @ USA (5) (FINAL)
+ - GER (3) @ DEN (1) (FINAL)
 
 TOP 5 STARS OF THE DAY:
  1. Jordan Binnington (Tkachuk Norris): 12.2
@@ -15,11 +15,10 @@ TOP 5 STARS OF THE DAY:
  4. Timo Meier (Janie's Got A Puck): 4.0
  5. Leon Draisaitl (Is Bobby Orr Available?): 3.0
 
-TEAM DAILY PERFORMANCE:
 Tkachuk Norris — Daily: 17.2
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Jordan Binnington    | W:1 SV:26 GA:0 SO:1            |  12.2 |  12.2
+Jordan Binnington    | W:1 SV:26 GA:0                 |  12.2 |  12.2
 Jack Eichel          | 0G 2A 0S                       |   2.0 |   2.0
 Nick Suzuki          | 1G 0A 0S                       |   2.0 |   2.0
 Zach Werenski        | 0G 1A 0S                       |   1.0 |   1.0
@@ -56,8 +55,8 @@ Adam Fox             | -                              |   0.0 |   0.0
 Winos Chasing Ginos — Daily: 8.0
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Tim Stutzle          | 2G 0A 1PPP 0S                  |   4.5 |   4.5
-Nathan MacKinnon     | 1G 0A 1PPP 0S                  |   2.5 |   2.5
+Tim Stutzle          | 2G 0A 0S                       |   4.5 |   4.5
+Nathan MacKinnon     | 1G 0A 0S                       |   2.5 |   2.5
 Kevin Fiala          | 0G 1A 0S                       |   1.0 |   1.0
 Eeli Tolvanen        | -                              |   0.0 |   2.0
 Adrian Kempe         | -                              |   0.0 |   1.0
@@ -85,7 +84,7 @@ Clayton Keller       | W:0 SV:39 GA:4                 |  -0.2 |  -0.2
 That's So Svech — Daily: 5.5
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Auston Matthews      | 1G 0A 1PPP 0S                  |   2.5 |   2.5
+Auston Matthews      | 1G 0A 0S                       |   2.5 |   2.5
 Macklin Celebrini    | 1G 0A 0S                       |   2.0 |   2.0
 Vincent Trocheck     | 0G 1A 0S                       |   1.0 |   1.0
 Victor Hedman        | -                              |   0.0 |   2.0
@@ -150,7 +149,7 @@ Igor Shesterkin      | -                              |   0.0 |   0.0
 Sergei Bobrovsky     | -                              |   0.0 |   0.0
 Devon Toews          | 0G 0A 0S                       |   0.0 |   0.0
 
-🏆 OVERALL STANDINGS (Total Tournament Points):
+🏆 OVERALL STANDINGS:
  1. Tkachuk Norris: 19.2
  2. Janie's Got A Puck: 13.3
  3. Winos Chasing Ginos: 13.0
@@ -160,7 +159,7 @@ Devon Toews          | 0G 0A 0S                       |   0.0 |   0.0
  7. Tifftastic Voyagers: 6.0
  8. Stankoven's Army: 5.2
 
-UPCOMING SCHEDULE (TODAY):
+UPCOMING:
  - FIN vs SWE (06:00 AM ET)
  - ITA vs SVK (06:00 AM ET)
  - FRA vs CZE (10:30 AM ET)
