@@ -1,118 +1,102 @@
 ═══ CAMELOT CANIACS OLYMPIC UPDATE ═══
-Daily Report for 2026-02-11
-Last Updated: 2026-02-13 11:37
+Daily Report for 2026-02-12
+Last Updated: 2026-02-13 11:38
 
 YESTERDAY'S GAMES:
- - SVK @ FIN (FINAL)
- - SWE @ ITA (FINAL)
+ - SUI @ FRA (FINAL)
+ - CZE @ CAN (FINAL)
+ - LAT @ USA (FINAL)
+ - GER @ DEN (FINAL)
 
 TOP 5 STARS OF THE DAY:
- 1. Juraj Slafkovsky (Janie's Got A Puck): 5.5
- 2. Filip Gustavsson (Sega Genesis NHL '94 All Stars): 4.0
- 3. Mika Zibanejad (Tifftastic Voyagers): 3.0
- 4. Rasmus Dahlin (Stankoven's Army): 3.0
- 5. Victor Hedman (That's So Svech): 2.0
+ 1. Jordan Binnington (Tkachuk Norris): 12.2
+ 2. Connor Hellebuyck (Sega Genesis NHL '94 All Stars): 5.4
+ 3. Tim Stutzle (Winos Chasing Ginos): 4.5
+ 4. Timo Meier (Janie's Got A Puck): 4.0
+ 5. Leon Draisaitl (Is Bobby Orr Available?): 3.0
 
 TEAM DAILY PERFORMANCE:
-Janie's Got A Puck — Daily: 5.5
+Tkachuk Norris — Daily: 17.2
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Juraj Slafkovsky     | 2G 1A 1PPP 0S                  |   5.5 |   5.5
-Filip Forsberg       | 0G 0A 0S                       |   0.0 |   0.0
-Mikko Rantanen       | 0G 0A 0S                       |   0.0 |   0.0
-Tage Thompson        | -                              |   0.0 |   0.0
-Clayton Keller       | -                              |   0.0 |   0.0
-Brandon Hagel        | -                              |   0.0 |   0.0
-Timo Meier           | -                              |   0.0 |   0.0
-Brad Marchand        | -                              |   0.0 |   0.0
-Cale Makar           | -                              |   0.0 |   0.0
-Jake Sanderson       | -                              |   0.0 |   0.0
-Bo Horvat            | -                              |   0.0 |   0.0
-Leo Carlsson         | -                              |   0.0 |   0.0
+Jordan Binnington    | W:1 SV:26 GA:0 SO:1            |  12.2 |  12.2
+Jack Eichel          | 0G 2A 0S                       |   2.0 |   2.0
+Nick Suzuki          | 1G 0A 0S                       |   2.0 |   2.0
+Zach Werenski        | 0G 1A 0S                       |   1.0 |   1.0
+William Nylander     | -                              |   0.0 |   2.0
+Nikita Kucherov      | -                              |   0.0 |   0.0
+Sam Reinhart         | 0G 0A 0S                       |   0.0 |   0.0
+Seth Jarvis          | -                              |   0.0 |   0.0
+Chris Kreider        | -                              |   0.0 |   0.0
+Sam Bennett          | 0G 0A 0S                       |   0.0 |   0.0
 
-Winos Chasing Ginos — Daily: 5.0
+Sega Genesis NHL '94 All Stars — Daily: 8.4
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Eeli Tolvanen        | 1G 0A 0S                       |   2.0 |   2.0
-Adrian Kempe         | 0G 1A 0S                       |   1.0 |   1.0
-Dylan Larkin         | 0G 1A 0S                       |   1.0 |   1.0
-Jesper Bratt         | 0G 1A 0S                       |   1.0 |   1.0
-Nathan MacKinnon     | -                              |   0.0 |   0.0
-Tim Stutzle          | -                              |   0.0 |   0.0
-Alexander Wennberg   | 0G 0A 0S                       |   0.0 |   0.0
-Kevin Fiala          | -                              |   0.0 |   0.0
-Darcy Kuemper        | -                              |   0.0 |   0.0
-
-Sega Genesis NHL '94 All Stars — Daily: 4.0
----------------------------------------------------------------------------
-Player               | Stats (Today)                  | Daily | Total
-Filip Gustavsson     | W:1 SV:20 GA:2                 |   4.0 |   4.0
+Connor Hellebuyck    | W:1 SV:17 GA:1                 |   5.4 |   5.4
+Thomas Harley        | 0G 2A 0S                       |   2.0 |   2.0
+Moritz Seider        | 0G 1A 0S                       |   1.0 |   1.0
+Filip Gustavsson     | -                              |   0.0 |   4.0
 Kirill Kaprizov      | -                              |   0.0 |   0.0
 Jason Robertson      | -                              |   0.0 |   0.0
-Matt Boldy           | -                              |   0.0 |   0.0
+Matt Boldy           | 0G 0A 0S                       |   0.0 |   0.0
 Alex Tuch            | -                              |   0.0 |   0.0
 Wyatt Johnston       | -                              |   0.0 |   0.0
-Tom Wilson           | -                              |   0.0 |   0.0
-Elias Pettersson     | 0G 0A 0S                       |   0.0 |   0.0
-J.T. Miller          | -                              |   0.0 |   0.0
-Moritz Seider        | -                              |   0.0 |   0.0
-Josh Morrissey       | -                              |   0.0 |   0.0
+Tom Wilson           | 0G 0A 0S                       |   0.0 |   0.0
+Elias Pettersson     | -                              |   0.0 |   0.0
+J.T. Miller          | 0G 0A 0S                       |   0.0 |   0.0
+Josh Morrissey       | 0G 0A 0S                       |   0.0 |   0.0
 Mikhail Sergachev    | -                              |   0.0 |   0.0
-Thomas Harley        | -                              |   0.0 |   0.0
-Charlie McAvoy       | -                              |   0.0 |   0.0
-Connor Hellebuyck    | -                              |   0.0 |   0.0
-Shea Theodore        | -                              |   0.0 |   0.0
+Charlie McAvoy       | 0G 0A 0S                       |   0.0 |   0.0
+Shea Theodore        | 0G 0A 0S                       |   0.0 |   0.0
 Matthew Tkachuk      | -                              |   0.0 |   0.0
 Jack Hughes          | -                              |   0.0 |   0.0
 Adam Fox             | -                              |   0.0 |   0.0
 
-Is Bobby Orr Available? — Daily: 3.0
+Winos Chasing Ginos — Daily: 8.0
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Rickard Rakell       | 0G 1A 0S                       |   1.0 |   1.0
-Erik Karlsson        | 0G 1A 0S                       |   1.0 |   1.0
-Artturi Lehkonen     | 0G 1A 0S                       |   1.0 |   1.0
-Leon Draisaitl       | -                              |   0.0 |   0.0
-Brady Tkachuk        | -                              |   0.0 |   0.0
-Martin Necas         | -                              |   0.0 |   0.0
-Mark Stone           | -                              |   0.0 |   0.0
-Brock Faber          | -                              |   0.0 |   0.0
-Adam Larsson         | -                              |   0.0 |   0.0
-Jeremy Swayman       | -                              |   0.0 |   0.0
-Joel Eriksson Ek     | 0G 0A 0S                       |   0.0 |   0.0
-Anton Lundell        | 0G 0A 0S                       |   0.0 |   0.0
+Tim Stutzle          | 2G 0A 1PPP 0S                  |   4.5 |   4.5
+Nathan MacKinnon     | 1G 0A 1PPP 0S                  |   2.5 |   2.5
+Kevin Fiala          | 0G 1A 0S                       |   1.0 |   1.0
+Eeli Tolvanen        | -                              |   0.0 |   2.0
+Adrian Kempe         | -                              |   0.0 |   1.0
+Dylan Larkin         | 0G 0A 0S                       |   0.0 |   1.0
+Jesper Bratt         | -                              |   0.0 |   1.0
+Alexander Wennberg   | -                              |   0.0 |   0.0
+Darcy Kuemper        | -                              |   0.0 |   0.0
 
-Tifftastic Voyagers — Daily: 3.0
+Janie's Got A Puck — Daily: 7.8
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Mika Zibanejad       | 1G 1A 0S                       |   3.0 |   3.0
-David Pastrnak       | -                              |   0.0 |   0.0
-Jake Guentzel        | -                              |   0.0 |   0.0
-Sidney Crosby        | -                              |   0.0 |   0.0
-Alex Ovechkin        | -                              |   0.0 |   0.0
-Lucas Raymond        | 0G 0A 0S                       |   0.0 |   0.0
-Jackson LaCombe      | -                              |   0.0 |   0.0
-Miro Heiskanen       | 0G 0A 0S                       |   0.0 |   0.0
-Roman Josi           | -                              |   0.0 |   0.0
-Igor Shesterkin      | -                              |   0.0 |   0.0
-Sergei Bobrovsky     | -                              |   0.0 |   0.0
-Devon Toews          | -                              |   0.0 |   0.0
+Timo Meier           | 2G 0A 0S                       |   4.0 |   4.0
+Bo Horvat            | 1G 0A 0S                       |   2.0 |   2.0
+Brad Marchand        | 0G 1A 0S                       |   1.0 |   1.0
+Cale Makar           | 0G 1A 0S                       |   1.0 |   1.0
+Juraj Slafkovsky     | -                              |   0.0 |   5.5
+Filip Forsberg       | -                              |   0.0 |   0.0
+Mikko Rantanen       | -                              |   0.0 |   0.0
+Tage Thompson        | -                              |   0.0 |   0.0
+Brandon Hagel        | 0G 0A 0S                       |   0.0 |   0.0
+Jake Sanderson       | 0G 0A 0S                       |   0.0 |   0.0
+Leo Carlsson         | -                              |   0.0 |   0.0
+Clayton Keller       | W:0 SV:39 GA:4                 |  -0.2 |  -0.2
 
-That's So Svech — Daily: 2.0
+That's So Svech — Daily: 5.5
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Victor Hedman        | 1G 0A 0S                       |   2.0 |   2.0
-Auston Matthews      | -                              |   0.0 |   0.0
-Kyle Connor          | -                              |   0.0 |   0.0
-Macklin Celebrini    | -                              |   0.0 |   0.0
-Vincent Trocheck     | -                              |   0.0 |   0.0
+Auston Matthews      | 1G 0A 1PPP 0S                  |   2.5 |   2.5
+Macklin Celebrini    | 1G 0A 0S                       |   2.0 |   2.0
+Vincent Trocheck     | 0G 1A 0S                       |   1.0 |   1.0
+Victor Hedman        | -                              |   0.0 |   2.0
+Kyle Connor          | 0G 0A 0S                       |   0.0 |   0.0
 Alex DeBrincat       | -                              |   0.0 |   0.0
 Carter Verhaeghe     | -                              |   0.0 |   0.0
-Tomas Hertl          | -                              |   0.0 |   0.0
+Tomas Hertl          | 0G 0A 0S                       |   0.0 |   0.0
 Zach Hyman           | -                              |   0.0 |   0.0
 Quinn Hughes         | -                              |   0.0 |   0.0
-Rasmus Andersson     | 0G 0A 0S                       |   0.0 |   0.0
-Colton Parayko       | -                              |   0.0 |   0.0
+Rasmus Andersson     | -                              |   0.0 |   0.0
+Colton Parayko       | 0G 0A 0S                       |   0.0 |   0.0
 Darren Raddysh       | -                              |   0.0 |   0.0
 Travis Sanheim       | -                              |   0.0 |   0.0
 Spencer Knight       | -                              |   0.0 |   0.0
@@ -121,45 +105,63 @@ Logan Thompson       | -                              |   0.0 |   0.0
 Andrei Svechnikov    | -                              |   0.0 |   0.0
 Logan Cooley         | -                              |   0.0 |   0.0
 
-Tkachuk Norris — Daily: 2.0
+Is Bobby Orr Available? — Daily: 5.0
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-William Nylander     | 1G 0A 0S                       |   2.0 |   2.0
-Nikita Kucherov      | -                              |   0.0 |   0.0
-Jack Eichel          | -                              |   0.0 |   0.0
-Sam Reinhart         | -                              |   0.0 |   0.0
-Seth Jarvis          | -                              |   0.0 |   0.0
-Nick Suzuki          | -                              |   0.0 |   0.0
-Chris Kreider        | -                              |   0.0 |   0.0
-Zach Werenski        | -                              |   0.0 |   0.0
-Jordan Binnington    | -                              |   0.0 |   0.0
-Sam Bennett          | -                              |   0.0 |   0.0
+Leon Draisaitl       | 1G 1A 0S                       |   3.0 |   3.0
+Mark Stone           | 1G 0A 0S                       |   2.0 |   2.0
+Rickard Rakell       | -                              |   0.0 |   1.0
+Erik Karlsson        | -                              |   0.0 |   1.0
+Artturi Lehkonen     | -                              |   0.0 |   1.0
+Brady Tkachuk        | -                              |   0.0 |   0.0
+Martin Necas         | 0G 0A 0S                       |   0.0 |   0.0
+Brock Faber          | 0G 0A 0S                       |   0.0 |   0.0
+Adam Larsson         | -                              |   0.0 |   0.0
+Jeremy Swayman       | 0G 0A 0S                       |   0.0 |   0.0
+Joel Eriksson Ek     | -                              |   0.0 |   0.0
+Anton Lundell        | -                              |   0.0 |   0.0
 
-Stankoven's Army — Daily: 1.2
+Stankoven's Army — Daily: 4.0
 ---------------------------------------------------------------------------
 Player               | Stats (Today)                  | Daily | Total
-Rasmus Dahlin        | 0G 3A 0S                       |   3.0 |   3.0
-Connor McDavid       | -                              |   0.0 |   0.0
-Mitch Marner         | -                              |   0.0 |   0.0
-Sebastian Aho        | 0G 0A 0S                       |   0.0 |   0.0
-Nico Hischier        | -                              |   0.0 |   0.0
-Roope Hintz          | 0G 0A 0S                       |   0.0 |   0.0
+Connor McDavid       | 0G 3A 0S                       |   3.0 |   3.0
+Mitch Marner         | 0G 1A 0S                       |   1.0 |   1.0
+Rasmus Dahlin        | -                              |   0.0 |   3.0
+Sebastian Aho        | -                              |   0.0 |   0.0
+Nico Hischier        | 0G 0A 0S                       |   0.0 |   0.0
+Roope Hintz          | -                              |   0.0 |   0.0
 Jake Walman          | -                              |   0.0 |   0.0
 Jake Oettinger       | -                              |   0.0 |   0.0
-Juuse Saros          | W:0 SV:21 GA:3                 |  -1.8 |  -1.8
+Juuse Saros          | -                              |   0.0 |  -1.8
+
+Tifftastic Voyagers — Daily: 3.0
+---------------------------------------------------------------------------
+Player               | Stats (Today)                  | Daily | Total
+Sidney Crosby        | 0G 2A 0S                       |   2.0 |   2.0
+Roman Josi           | 0G 1A 0S                       |   1.0 |   1.0
+Mika Zibanejad       | -                              |   0.0 |   3.0
+David Pastrnak       | 0G 0A 0S                       |   0.0 |   0.0
+Jake Guentzel        | 0G 0A 0S                       |   0.0 |   0.0
+Alex Ovechkin        | -                              |   0.0 |   0.0
+Lucas Raymond        | -                              |   0.0 |   0.0
+Jackson LaCombe      | -                              |   0.0 |   0.0
+Miro Heiskanen       | -                              |   0.0 |   0.0
+Igor Shesterkin      | -                              |   0.0 |   0.0
+Sergei Bobrovsky     | -                              |   0.0 |   0.0
+Devon Toews          | 0G 0A 0S                       |   0.0 |   0.0
 
 🏆 OVERALL STANDINGS (Total Tournament Points):
- 1. Janie's Got A Puck: 5.5
- 2. Winos Chasing Ginos: 5.0
- 3. Sega Genesis NHL '94 All Stars: 4.0
- 4. Is Bobby Orr Available?: 3.0
- 5. Tifftastic Voyagers: 3.0
- 6. That's So Svech: 2.0
- 7. Tkachuk Norris: 2.0
- 8. Stankoven's Army: 1.2
+ 1. Tkachuk Norris: 19.2
+ 2. Janie's Got A Puck: 13.3
+ 3. Winos Chasing Ginos: 13.0
+ 4. Sega Genesis NHL '94 All Stars: 12.4
+ 5. Is Bobby Orr Available?: 8.0
+ 6. That's So Svech: 7.5
+ 7. Tifftastic Voyagers: 6.0
+ 8. Stankoven's Army: 5.2
 
 UPCOMING SCHEDULE (TODAY):
- - SUI vs FRA (2026-02-12T11:00:00Z)
- - CZE vs CAN (2026-02-12T15:30:00Z)
- - LAT vs USA (2026-02-12T20:00:00Z)
- - GER vs DEN (2026-02-12T20:00:00Z)
+ - FIN vs SWE (2026-02-13T11:00:00Z)
+ - ITA vs SVK (2026-02-13T11:00:00Z)
+ - FRA vs CZE (2026-02-13T15:30:00Z)
+ - CAN vs SUI (2026-02-13T20:00:00Z)
