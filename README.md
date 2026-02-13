@@ -1,4 +1,4 @@
-# Camelot Caniacs Olympic Tracker
+# Fantasy Hockey Olympic Tracker
 
 A little toy for my fantasy hockey league to pretend the olympics are an in season tournament for us. This was whipped together using Built with Gemini Pro and VS Code agent using GPT-5 Mini..
 
