@@ -1,0 +1,35 @@
+name: Daily Olympic Update
+
+on:
+  schedule:
+    # Runs at 05:01 UTC daily (12:01 AM EST)
+    - cron: '1 5 * * *'
+  workflow_dispatch: # Allows you to run it manually via the 'Actions' tab
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily stats
+        run: python daily_stats.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add daily_report.txt daily_report.html totals.json
+          git commit -m "Automated Daily Update: $(date)" || echo "No changes to commit"
+          git push
