@@ -4,6 +4,7 @@ Robust daily boxscore aggregator for the Camelot Caniacs Olympic fantasy league.
 Updates: 
 - Implements 'git stash' workflow to fix "unstaged changes" error during rebase.
 - Ensures reports are pushed even if the script file itself is modified locally.
+- changed column header from "Stats (Today)" to "Stats for {Month Day}"
 """
 
 from __future__ import annotations
@@ -208,6 +209,9 @@ def format_game_time(utc_str: str) -> str:
 
 def write_text_report(players, games, report_date_str, upcoming):
     now_str = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %I:%M %p ET")
+    short_date = datetime.strptime(report_date_str, "%Y-%m-%d").strftime("%b %d")
+    header_col = f"Stats for {short_date}"
+    
     lines = ["═══ CAMELOT CANIACS OLYMPIC UPDATE ═══", f"Daily Report for {report_date_str}", f"Last Updated: {now_str}\n", "YESTERDAY'S GAMES:"]
     if not games: lines.append(" (No completed games found)")
     for g in games:
@@ -220,7 +224,7 @@ def write_text_report(players, games, report_date_str, upcoming):
     teams = defaultdict(list)
     for p in players: teams[p["FantasyTeam"]].append(p)
     for team, total in sorted([(t, sum(x['DailyPts'] for x in m)) for t, m in teams.items()], key=lambda x: (-x[1], x[0])):
-        lines.extend([f"\n{team} — Daily: {total:.1f}", "-" * 75, f"{'Player':20} | {'Stats (Today)':30} | Daily | Total"])
+        lines.extend([f"\n{team} — Daily: {total:.1f}", "-" * 75, f"{'Player':20} | {header_col:30} | Daily | Total"])
         for p in sorted(teams[team], key=lambda x: (-x['DailyPts'], -x['TotalPts'])):
             s = p['Stats']
             stat = f"W:{int(s['W'])} SV:{int(s['SV'])} GA:{int(s['GA'])}" if s.get('SV') or s.get('W') else f"{int(s['G'])}G {int(s['A'])}A {int(s['SOG'])}S" if any(s.values()) else "-"
@@ -233,6 +237,8 @@ def write_text_report(players, games, report_date_str, upcoming):
 
 def write_html_report(players, games, report_date_str, upcoming):
     now_str = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %I:%M %p ET")
+    short_date = datetime.strptime(report_date_str, "%Y-%m-%d").strftime("%b %d")
+    
     html = f"""<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Caniacs Update</title><style>:root{{--primary:#1a1a1a;--accent:#d32f2f;--bg:#f9f9f9;--card:#fff;--border:#e0e0e0}}body{{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--primary);margin:0;padding:20px}}.container{{max-width:800px;margin:0 auto}}header{{border-bottom:3px solid var(--primary);padding-bottom:15px;margin-bottom:25px}}h1{{margin:0;font-size:1.8rem}}.meta{{color:#666;font-size:.9rem}}.card{{background:var(--card);border-radius:8px;padding:15px;margin-bottom:20px;border:1px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,0.05)}}table{{width:100%;border-collapse:collapse;font-size:.95rem}}th,td{{padding:10px;border-bottom:1px solid var(--border);text-align:left}}th{{background:#f4f4f4}}.num{{text-align:right}}.team-h{{background:var(--primary);color:#fff;padding:10px 15px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;margin-top:25px}}.game-s{{font-weight:700}}</style></head><body><div class='container'><header><h1>Camelot Caniacs Olympic Update</h1><div class='meta'>Date: {report_date_str} &bull; Updated: {now_str}</div></header><section class='card'><h3>📅 Yesterday's Games</h3><ul>"""
     for g in (games or []): html += f"<li>{g.get('awayTeam',{}).get('abbrev')} <span class='game-s'>({g.get('awayTeam',{}).get('score',0)})</span> @ {g.get('homeTeam',{}).get('abbrev')} <span class='game-s'>({g.get('homeTeam',{}).get('score',0)})</span></li>"
     html += "</ul></section><section class='card' style='background:#fffde7'><h3>⭐ Top 5 Stars of the Day</h3><ol>"
@@ -241,7 +247,7 @@ def write_html_report(players, games, report_date_str, upcoming):
     teams = defaultdict(list)
     for p in players: teams[p["FantasyTeam"]].append(p)
     for team, total in sorted([(t, sum(x['DailyPts'] for x in m)) for t, m in teams.items()], key=lambda x: (-x[1], x[0])):
-        html += f"<div class='team-h'><span>{team}</span><span>Daily: {total:.1f}</span></div><div class='card' style='border-radius:0 0 6px 6px;border-top:none;margin-bottom:20px'><table><tr><th>Player</th><th>Stats (Today)</th><th class='num'>Daily</th><th class='num'>Total</th></tr>"
+        html += f"<div class='team-h'><span>{team}</span><span>Daily: {total:.1f}</span></div><div class='card' style='border-radius:0 0 6px 6px;border-top:none;margin-bottom:20px'><table><tr><th>Player</th><th>Stats for {short_date}</th><th class='num'>Daily</th><th class='num'>Total</th></tr>"
         for p in sorted(teams[team], key=lambda x: (-x['DailyPts'], -x['TotalPts'])):
             s, st = p['Stats'], "-"
             if s.get('SV') or s.get('W'): st = f"W:{int(s['W'])} SV:{int(s['SV'])} GA:{int(s['GA'])}"
