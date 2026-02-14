@@ -2,9 +2,9 @@
 
 Robust daily boxscore aggregator for the Camelot Caniacs Olympic fantasy league.
 Updates: 
-- Implements 'git stash' workflow to fix "unstaged changes" error during rebase.
-- Ensures reports are pushed even if the script file itself is modified locally.
-- changed column header from "Stats (Today)" to "Stats for {Month Day}"
+- Restored display of Hits (H), Blocks (B), and Power Play Points (PPP) in reports.
+- Added 'format_stat_line' helper to ensure consistent stat formatting across Text and HTML.
+- Maintains Git stash workflow for smooth updates.
 """
 
 from __future__ import annotations
@@ -207,6 +207,24 @@ def format_game_time(utc_str: str) -> str:
         return dt_ny.strftime('%I:%M %p ET')
     except Exception: return utc_str
 
+def format_stat_line(s: dict) -> str:
+    """Returns a formatted string for stats, including HIT/BLK if present."""
+    if s.get('SV') or s.get('W') or s.get('GA'):
+        return f"W:{int(s['W'])} SV:{int(s['SV'])} GA:{int(s['GA'])}"
+    
+    if not any(s.values()):
+        return "-"
+        
+    base = f"{int(s['G'])}G {int(s['A'])}A {int(s['SOG'])}S"
+    extras = []
+    if s.get('PPP'): extras.append(f"{int(s['PPP'])}PPP")
+    if s.get('HIT'): extras.append(f"{int(s['HIT'])}H")
+    if s.get('BLK'): extras.append(f"{int(s['BLK'])}B")
+    
+    if extras:
+        return f"{base} {' '.join(extras)}"
+    return base
+
 def write_text_report(players, games, report_date_str, upcoming):
     now_str = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %I:%M %p ET")
     short_date = datetime.strptime(report_date_str, "%Y-%m-%d").strftime("%b %d")
@@ -226,8 +244,7 @@ def write_text_report(players, games, report_date_str, upcoming):
     for team, total in sorted([(t, sum(x['DailyPts'] for x in m)) for t, m in teams.items()], key=lambda x: (-x[1], x[0])):
         lines.extend([f"\n{team} — Daily: {total:.1f}", "-" * 75, f"{'Player':20} | {header_col:30} | Daily | Total"])
         for p in sorted(teams[team], key=lambda x: (-x['DailyPts'], -x['TotalPts'])):
-            s = p['Stats']
-            stat = f"W:{int(s['W'])} SV:{int(s['SV'])} GA:{int(s['GA'])}" if s.get('SV') or s.get('W') else f"{int(s['G'])}G {int(s['A'])}A {int(s['SOG'])}S" if any(s.values()) else "-"
+            stat = format_stat_line(p['Stats'])
             lines.append(f"{p['Player'][:20]:20} | {stat:30} | {p['DailyPts']:5.1f} | {p['TotalPts']:5.1f}")
             
     standings = sorted([(t, sum(p['TotalPts'] for p in m)) for t, m in teams.items()], key=lambda x: -x[1])
@@ -249,10 +266,8 @@ def write_html_report(players, games, report_date_str, upcoming):
     for team, total in sorted([(t, sum(x['DailyPts'] for x in m)) for t, m in teams.items()], key=lambda x: (-x[1], x[0])):
         html += f"<div class='team-h'><span>{team}</span><span>Daily: {total:.1f}</span></div><div class='card' style='border-radius:0 0 6px 6px;border-top:none;margin-bottom:20px'><table><tr><th>Player</th><th>Stats for {short_date}</th><th class='num'>Daily</th><th class='num'>Total</th></tr>"
         for p in sorted(teams[team], key=lambda x: (-x['DailyPts'], -x['TotalPts'])):
-            s, st = p['Stats'], "-"
-            if s.get('SV') or s.get('W'): st = f"W:{int(s['W'])} SV:{int(s['SV'])} GA:{int(s['GA'])}"
-            elif any(s.values()): st = f"{int(s['G'])}G {int(s['A'])}A {int(s['SOG'])}S"
-            html += f"<tr><td>{p['Player']}</td><td>{st}</td><td class='num'>{p['DailyPts']:.1f}</td><td class='num'>{p['TotalPts']:.1f}</td></tr>"
+            stat = format_stat_line(p['Stats'])
+            html += f"<tr><td>{p['Player']}</td><td>{stat}</td><td class='num'>{p['DailyPts']:.1f}</td><td class='num'>{p['TotalPts']:.1f}</td></tr>"
         html += "</table></div>"
     html += "<section class='card'><h3>🏆 Overall Standings</h3><ol>"
     for team, pts in sorted([(t, sum(p['TotalPts'] for p in m)) for t, m in teams.items()], key=lambda x: -x[1]): html += f"<li><b>{team}</b>: {pts:.1f}</li>"
