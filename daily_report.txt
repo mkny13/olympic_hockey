@@ -1,6 +1,6 @@
 ═══ CAMELOT CANIACS OLYMPIC UPDATE ═══
 Daily Report for 2026-02-13
-Last Updated: 2026-02-14 12:37 AM ET
+Last Updated: 2026-02-14 09:33 AM ET
 
 YESTERDAY'S GAMES:
  - FIN (4) @ SWE (1) (FINAL)
@@ -19,8 +19,8 @@ Stankoven's Army — Daily: 17.8
 ---------------------------------------------------------------------------
 Player               | Stats for Feb 13               | Daily | Total
 Juuse Saros          | W:1 SV:34 GA:1                 |   8.8 |   7.0
-Connor McDavid       | 1G 2A 0S                       |   4.5 |   7.5
-Rasmus Dahlin        | 1G 0A 0S                       |   2.5 |   5.5
+Connor McDavid       | 1G 2A 0S 1PPP                  |   4.5 |   7.5
+Rasmus Dahlin        | 1G 0A 0S 1PPP                  |   2.5 |   5.5
 Mitch Marner         | 0G 1A 0S                       |   1.0 |   2.0
 Roope Hintz          | 0G 1A 0S                       |   1.0 |   1.0
 Sebastian Aho        | 0G 0A 0S                       |   0.0 |   0.0
@@ -47,7 +47,7 @@ Devon Toews          | 0G 0A 0S                       |   0.0 |   0.0
 Is Bobby Orr Available? — Daily: 5.5
 ---------------------------------------------------------------------------
 Player               | Stats for Feb 13               | Daily | Total
-Martin Necas         | 1G 1A 0S                       |   3.5 |   3.5
+Martin Necas         | 1G 1A 0S 1PPP                  |   3.5 |   3.5
 Anton Lundell        | 1G 0A 0S                       |   2.0 |   2.0
 Leon Draisaitl       | -                              |   0.0 |   3.0
 Mark Stone           | 0G 0A 0S                       |   0.0 |   2.0
