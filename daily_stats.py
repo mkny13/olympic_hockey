@@ -2,9 +2,9 @@
 
 Robust daily boxscore aggregator for the Camelot Caniacs Olympic fantasy league.
 Updates: 
-- Restored display of Hits (H), Blocks (B), and Power Play Points (PPP) in reports.
-- Added 'format_stat_line' helper to ensure consistent stat formatting across Text and HTML.
-- Maintains Git stash workflow for smooth updates.
+- Fixes SOG (Shots on Goal) issue by mapping the correct API key ('sog').
+- Implements 'git stash' workflow for robust Github syncing.
+- Formats stat lines consistently in Text and HTML.
 """
 
 from __future__ import annotations
@@ -113,18 +113,27 @@ def parse_boxscore_for_players(box: dict) -> List[dict]:
                 for p in team.get(role, []) or []:
                     name = (p.get("name") or {}).get("default") or p.get("name")
                     row = {"Player": name, "G":0, "A":0, "PPP":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
-                    row["G"], row["A"] = p.get("goals", 0), p.get("assists", 0)
+                    row["G"] = p.get("goals", 0)
+                    row["A"] = p.get("assists", 0)
                     row["PPP"] = p.get("powerPlayGoals", 0) + p.get("powerPlayAssists", 0)
-                    row["SOG"], row["HIT"], row["BLK"] = p.get("shots", 0), p.get("hits", 0), p.get("blockedShots", 0)
+                    
+                    # FIX: NHL Olympic feed uses 'sog', regular season often uses 'shots'
+                    row["SOG"] = p.get("sog", p.get("shots", 0))
+                    
+                    # Note: These keys exist but are 0 in Olympic feed
+                    row["HIT"] = p.get("hits", 0)
+                    row["BLK"] = p.get("blockedShots", 0)
                     rows.append(row)
             for g in team.get("goalies", []) or []:
                 name = (g.get("name") or {}).get("default") or g.get("name")
                 row = {"Player": name, "G":0, "A":0, "PPP":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
-                row["GA"], row["SV"] = g.get("goalsAgainst", 0), g.get("saves", 0)
-                dec = (g.get("decision") or "").upper()
-                if dec == "W": row["W"] = 1
-                elif dec in ("OT", "OTL"): row["OTL"] = 1
-                if row["GA"] == 0 and row["W"] == 1 and row["SV"] > 0: row["SO"] = 1
+                row["GA"] = g.get("goalsAgainst", 0)
+                row["SV"] = g.get("saves", 0)
+                decision = (g.get("decision") or "").upper()
+                if decision == "W": row["W"] = 1
+                elif decision in ("OT", "OTL"): row["OTL"] = 1
+                if row["GA"] == 0 and row["W"] == 1 and row["SV"] > 0:
+                    row["SO"] = 1
                 rows.append(row)
     return rows
 
