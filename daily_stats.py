@@ -16,7 +16,7 @@ import sys
 import time
 from collections import defaultdict
 from datetime import datetime, timedelta
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Tuple
 import unicodedata
 import re
 import requests
@@ -42,7 +42,7 @@ def load_scoring() -> Dict[str, float]:
         from scoring_config import SCORING_SETTINGS
         return SCORING_SETTINGS
     except Exception:
-        return {"G": 2, "A": 1, "PPP": 0.5, "SOG": 0.1, "HIT": 0.1, "BLK": 0.5, "W": 4, "GA": -2, "SV": 0.2, "SO": 3, "OTL": 1}
+        return {"G": 2, "A": 1, "PPP": 0.5, "SHP": 0.5, "GWG": 1, "HAT": 1, "SOG": 0.1, "HIT": 0.1, "BLK": 0.5, "W": 4, "GA": -2, "SV": 0.2, "SO": 3, "OTL": 1}
 
 def load_rosters(path: str) -> Dict[str, Dict[str, str]]:
     if not os.path.exists(path): return {}
@@ -102,6 +102,209 @@ def fetch_schedule_for_date(target_date: str) -> List[dict]:
 def fetch_boxscore(game_pk: int) -> dict | None:
     return api_get(f"gamecenter/{game_pk}/boxscore") or api_get(f"game/{game_pk}/boxscore")
 
+def fetch_play_by_play(game_pk: int) -> dict | None:
+    data = api_get(f"gamecenter/{game_pk}/play-by-play")
+    if data:
+        return data
+    # StatsAPI fallback shape (legacy)
+    return api_get(f"game/{game_pk}/feed/live")
+
+def _iter_goal_events(pbp: dict) -> List[dict]:
+    if not pbp:
+        return []
+    # NHL API shape
+    plays = pbp.get("plays")
+    if isinstance(plays, list):
+        return [e for e in plays if (e.get("typeDescKey") or "").lower() == "goal"]
+    # StatsAPI shape
+    all_plays = (((pbp.get("liveData") or {}).get("plays") or {}).get("allPlays")) or []
+    goals = []
+    for e in all_plays:
+        if (((e.get("result") or {}).get("eventTypeId")) or "").upper() == "GOAL":
+            goals.append(e)
+    return goals
+
+def _build_id_to_norm_from_box(box: dict) -> Dict[int, str]:
+    out: Dict[int, str] = {}
+    pbg = (box or {}).get("playerByGameStats") or {}
+    for side in ("awayTeam", "homeTeam"):
+        team = pbg.get(side, {}) or {}
+        for role in ("forwards", "defense"):
+            for p in team.get(role, []) or []:
+                pid = p.get("playerId") or p.get("id")
+                name = (p.get("name") or {}).get("default") or p.get("name")
+                if pid and name:
+                    out[int(pid)] = _norm(name)
+    # StatsAPI fallback
+    all_players = (((box or {}).get("liveData") or {}).get("boxscore") or {}).get("teams") or {}
+    for side in ("away", "home"):
+        players = ((all_players.get(side) or {}).get("players")) or {}
+        for pdata in players.values():
+            person = pdata.get("person") or {}
+            pid = person.get("id")
+            name = person.get("fullName")
+            if pid and name:
+                out[int(pid)] = _norm(name)
+    return out
+
+def _extract_team_ids_from_box(box: dict) -> Dict[str, int]:
+    out: Dict[str, int] = {}
+    away = (box or {}).get("awayTeam") or {}
+    home = (box or {}).get("homeTeam") or {}
+    if away.get("id") is not None:
+        out["away"] = int(away["id"])
+    if home.get("id") is not None:
+        out["home"] = int(home["id"])
+    # StatsAPI fallback
+    teams = (((box or {}).get("gameData") or {}).get("teams")) or {}
+    if "away" not in out and ((teams.get("away") or {}).get("id") is not None):
+        out["away"] = int((teams.get("away") or {}).get("id"))
+    if "home" not in out and ((teams.get("home") or {}).get("id") is not None):
+        out["home"] = int((teams.get("home") or {}).get("id"))
+    return out
+
+def _extract_final_score(box: dict, goal_events: List[dict]) -> Tuple[int, int]:
+    away = ((box or {}).get("awayTeam") or {}).get("score")
+    home = ((box or {}).get("homeTeam") or {}).get("score")
+    if away is not None and home is not None:
+        return int(away), int(home)
+    # StatsAPI fallback line score
+    ls_teams = (((box or {}).get("liveData") or {}).get("linescore") or {}).get("teams") or {}
+    if ((ls_teams.get("away") or {}).get("goals") is not None) and ((ls_teams.get("home") or {}).get("goals") is not None):
+        return int((ls_teams.get("away") or {}).get("goals")), int((ls_teams.get("home") or {}).get("goals"))
+    # Last known event score as a final fallback
+    away_score, home_score = 0, 0
+    for e in goal_events:
+        d = (e.get("details") or {}) if e.get("details") is not None else {}
+        if d.get("awayScore") is not None and d.get("homeScore") is not None:
+            away_score = int(d.get("awayScore"))
+            home_score = int(d.get("homeScore"))
+            continue
+        about = e.get("about") or {}
+        if about.get("goals"):
+            g = about.get("goals") or {}
+            if g.get("away") is not None and g.get("home") is not None:
+                away_score = int(g.get("away"))
+                home_score = int(g.get("home"))
+    return away_score, home_score
+
+def _event_strength_is_shorthanded(event: dict) -> bool:
+    # Check common explicit fields first.
+    details = event.get("details") or {}
+    strength = details.get("strength") or details.get("strengthCode")
+    if isinstance(strength, dict):
+        strength = strength.get("code") or strength.get("name")
+    sval = str(strength or "").upper().replace("-", "").replace(" ", "")
+    if sval in {"SH", "SHG", "SHORTHANDED", "SHORTHANDEDGOAL"}:
+        return True
+
+    # StatsAPI uses result.strength.code/name on GOAL plays.
+    result = event.get("result") or {}
+    r_strength = result.get("strength") or {}
+    r_code = str((r_strength.get("code") or "")).upper().replace("-", "").replace(" ", "")
+    r_name = str((r_strength.get("name") or "")).upper().replace("-", "").replace(" ", "")
+    if r_code in {"SH", "SHG"} or r_name in {"SHORTHANDED", "SHORTHANDEDGOAL"}:
+        return True
+
+    # Conservative text fallback for varying payloads.
+    text = " ".join([
+        str(details.get("eventDescription") or ""),
+        str(result.get("description") or ""),
+        str(event.get("typeDescKey") or ""),
+    ]).lower()
+    return "short" in text and "hand" in text
+
+def _event_team_side(event: dict, team_ids: Dict[str, int]) -> str | None:
+    details = event.get("details") or {}
+    owner = details.get("eventOwnerTeamId") or ((event.get("team") or {}).get("id"))
+    if owner is not None:
+        owner = int(owner)
+        if owner == team_ids.get("away"):
+            return "away"
+        if owner == team_ids.get("home"):
+            return "home"
+    return None
+
+def _event_scorer_id(event: dict) -> int | None:
+    details = event.get("details") or {}
+    sid = details.get("scoringPlayerId")
+    if sid is not None:
+        return int(sid)
+    players = event.get("players") or []
+    for p in players:
+        if ((p.get("playerType") or "").upper() in {"SCORER"}) and ((p.get("player") or {}).get("id") is not None):
+            return int((p.get("player") or {}).get("id"))
+    return None
+
+def _event_assist_ids(event: dict) -> List[int]:
+    details = event.get("details") or {}
+    out = []
+    for k in ("assist1PlayerId", "assist2PlayerId"):
+        if details.get(k) is not None:
+            out.append(int(details[k]))
+    if out:
+        return out
+    players = event.get("players") or []
+    for p in players:
+        if ((p.get("playerType") or "").upper().startswith("ASSIST")) and ((p.get("player") or {}).get("id") is not None):
+            out.append(int((p.get("player") or {}).get("id")))
+    return out
+
+def derive_bonus_stats_from_play_by_play(rows: List[dict], box: dict, pbp: dict) -> None:
+    goal_events = _iter_goal_events(pbp)
+    if not goal_events:
+        return
+    id_to_norm = _build_id_to_norm_from_box(box)
+    if not id_to_norm:
+        return
+
+    by_norm = {_norm(r.get("Player") or ""): r for r in rows}
+    shp_counts: Dict[str, int] = defaultdict(int)
+    gwg_norm: str | None = None
+
+    team_ids = _extract_team_ids_from_box(box)
+    away_final, home_final = _extract_final_score(box, goal_events)
+    winner_side = None
+    loser_score = None
+    if away_final > home_final:
+        winner_side, loser_score = "away", home_final
+    elif home_final > away_final:
+        winner_side, loser_score = "home", away_final
+
+    away_running, home_running = 0, 0
+    for e in goal_events:
+        details = e.get("details") or {}
+        if details.get("awayScore") is not None and details.get("homeScore") is not None:
+            away_running = int(details.get("awayScore"))
+            home_running = int(details.get("homeScore"))
+        else:
+            side = _event_team_side(e, team_ids)
+            if side == "away":
+                away_running += 1
+            elif side == "home":
+                home_running += 1
+
+        scorer_id = _event_scorer_id(e)
+        if _event_strength_is_shorthanded(e):
+            for pid in [scorer_id] + _event_assist_ids(e):
+                if pid is None:
+                    continue
+                norm = id_to_norm.get(int(pid))
+                if norm:
+                    shp_counts[norm] += 1
+
+        if winner_side and loser_score is not None and gwg_norm is None:
+            winning_score = away_running if winner_side == "away" else home_running
+            if winning_score >= (loser_score + 1):
+                if scorer_id is not None and id_to_norm.get(int(scorer_id)):
+                    gwg_norm = id_to_norm[int(scorer_id)]
+
+    for norm, v in shp_counts.items():
+        if norm in by_norm:
+            by_norm[norm]["SHP"] = max(int(by_norm[norm].get("SHP", 0)), v)
+    if gwg_norm and gwg_norm in by_norm:
+        by_norm[gwg_norm]["GWG"] = max(int(by_norm[gwg_norm].get("GWG", 0)), 1)
+
 def parse_boxscore_for_players(box: dict) -> List[dict]:
     rows = []
     if not box: return rows
@@ -112,10 +315,13 @@ def parse_boxscore_for_players(box: dict) -> List[dict]:
             for role in ("forwards", "defense"):
                 for p in team.get(role, []) or []:
                     name = (p.get("name") or {}).get("default") or p.get("name")
-                    row = {"Player": name, "G":0, "A":0, "PPP":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
+                    row = {"Player": name, "G":0, "A":0, "PPP":0, "SHP":0, "GWG":0, "HAT":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
                     row["G"] = p.get("goals", 0)
                     row["A"] = p.get("assists", 0)
                     row["PPP"] = p.get("powerPlayGoals", 0) + p.get("powerPlayAssists", 0)
+                    row["GWG"] = p.get("gameWinningGoals", p.get("gameWinningGoal", 0))
+                    row["SHP"] = p.get("shortHandedGoals", p.get("shorthandedGoals", 0)) + p.get("shortHandedAssists", p.get("shorthandedAssists", 0))
+                    row["HAT"] = 1 if int(row["G"]) >= 3 else 0
                     
                     # FIX: NHL Olympic feed uses 'sog', regular season often uses 'shots'
                     row["SOG"] = p.get("sog", p.get("shots", 0))
@@ -126,7 +332,7 @@ def parse_boxscore_for_players(box: dict) -> List[dict]:
                     rows.append(row)
             for g in team.get("goalies", []) or []:
                 name = (g.get("name") or {}).get("default") or g.get("name")
-                row = {"Player": name, "G":0, "A":0, "PPP":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
+                row = {"Player": name, "G":0, "A":0, "PPP":0, "SHP":0, "GWG":0, "HAT":0, "SOG":0, "HIT":0, "BLK":0, "W":0, "GA":0, "SV":0, "SO":0, "OTL":0}
                 row["GA"] = g.get("goalsAgainst", 0)
                 row["SV"] = g.get("saves", 0)
                 decision = (g.get("decision") or "").upper()
@@ -143,7 +349,7 @@ def aggregate_by_player(rows: List[dict]) -> Dict[str, dict]:
         name = r.get("Player") or ""
         key = _norm(name)
         if key not in agg:
-            agg[key] = {k: 0 for k in ("G", "A", "PPP", "SOG", "HIT", "BLK", "W", "GA", "SV", "SO", "OTL")}
+            agg[key] = {k: 0 for k in ("G", "A", "PPP", "SHP", "GWG", "HAT", "SOG", "HIT", "BLK", "W", "GA", "SV", "SO", "OTL")}
             agg[key]["Player"] = name
         for k in agg[key]:
             if k != "Player": agg[key][k] += int(r.get(k, 0))
@@ -165,7 +371,7 @@ def save_totals_data(path: str, data: dict) -> None:
 def compute_points(stats: dict, scoring: dict) -> float:
     return sum(float(stats.get(k, 0)) * float(scoring.get(k, 0)) for k in scoring)
 
-def generate_report(roster, scoring, report_date_str, finished_games, boxscore_map, tomorrow_games_list):
+def generate_report(roster, scoring, report_date_str, finished_games, boxscore_map, tomorrow_games_list, do_push=True):
     data = load_totals_data(TOTALS_JSON)
     total_scores = data.get("scores", {})
     processed_ids = set(data.get("processed_games", []))
@@ -193,7 +399,7 @@ def generate_report(roster, scoring, report_date_str, finished_games, boxscore_m
     
     player_entries = {}
     for key, r in roster.items():
-        player_entries[key] = {"Player": r["Player"], "FantasyTeam": r["FantasyTeam"], "Stats": {k: 0 for k in ("G", "A", "PPP", "SOG", "HIT", "BLK", "W", "GA", "SV", "SO", "OTL")}, "DailyPts": 0.0, "TotalPts": total_scores.get(key, 0.0)}
+        player_entries[key] = {"Player": r["Player"], "FantasyTeam": r["FantasyTeam"], "Stats": {k: 0 for k in ("G", "A", "PPP", "SHP", "GWG", "HAT", "SOG", "HIT", "BLK", "W", "GA", "SV", "SO", "OTL")}, "DailyPts": 0.0, "TotalPts": total_scores.get(key, 0.0)}
 
     for norm, stats in daily_stats.items():
         match_key = norm if norm in roster else None
@@ -207,7 +413,22 @@ def generate_report(roster, scoring, report_date_str, finished_games, boxscore_m
 
     write_text_report(list(player_entries.values()), finished_games, report_date_str, tomorrow_games_list)
     write_html_report(list(player_entries.values()), finished_games, report_date_str, tomorrow_games_list)
-    push_to_github()
+    if do_push:
+        push_to_github()
+
+def build_boxscore_map_for_games(games: List[dict]) -> Dict[int, List[dict]]:
+    box_map: Dict[int, List[dict]] = {}
+    for g in games:
+        game_pk = g.get("gamePk") or g.get("id")
+        if not game_pk:
+            continue
+        box = fetch_boxscore(game_pk)
+        rows = parse_boxscore_for_players(box)
+        if rows:
+            pbp = fetch_play_by_play(game_pk)
+            derive_bonus_stats_from_play_by_play(rows, box, pbp)
+        box_map[game_pk] = rows
+    return box_map
 
 def format_game_time(utc_str: str) -> str:
     if not utc_str: return "TBD"
@@ -217,7 +438,7 @@ def format_game_time(utc_str: str) -> str:
     except Exception: return utc_str
 
 def format_stat_line(s: dict) -> str:
-    """Returns a formatted string for stats, including HIT/BLK if present."""
+    """Returns a formatted string for stats, including bonus skater stats."""
     if s.get('SV') or s.get('W') or s.get('GA'):
         return f"W:{int(s['W'])} SV:{int(s['SV'])} GA:{int(s['GA'])}"
     
@@ -227,6 +448,9 @@ def format_stat_line(s: dict) -> str:
     base = f"{int(s['G'])}G {int(s['A'])}A {int(s['SOG'])}S"
     extras = []
     if s.get('PPP'): extras.append(f"{int(s['PPP'])}PPP")
+    if s.get('SHP'): extras.append(f"{int(s['SHP'])}SHP")
+    if s.get('GWG'): extras.append(f"{int(s['GWG'])}GWG")
+    if s.get('HAT'): extras.append(f"{int(s['HAT'])}HAT")
     if s.get('HIT'): extras.append(f"{int(s['HIT'])}H")
     if s.get('BLK'): extras.append(f"{int(s['BLK'])}B")
     
@@ -312,14 +536,40 @@ def push_to_github():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--date", help="Date (YYYY-MM-DD)")
+    parser.add_argument("--no-push", action="store_true", help="Generate reports/totals but skip git push.")
+    parser.add_argument("--rebuild-from", help="Rebuild totals from this start date (YYYY-MM-DD), inclusive.")
+    parser.add_argument("--rebuild-to", help="Rebuild totals through this end date (YYYY-MM-DD), inclusive.")
     args = parser.parse_args()
     scoring, roster = load_scoring(), load_rosters(ROSTERS_CSV)
     rep_date = args.date or (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+    do_push = not args.no_push
+
+    if args.rebuild_from:
+        start_dt = datetime.strptime(args.rebuild_from, "%Y-%m-%d")
+        end_dt = datetime.strptime(args.rebuild_to or rep_date, "%Y-%m-%d")
+        if end_dt < start_dt:
+            raise ValueError("--rebuild-to must be on/after --rebuild-from")
+        save_totals_data(TOTALS_JSON, {"scores": {}, "processed_games": []})
+
+        current = start_dt
+        while current <= end_dt:
+            day = current.strftime("%Y-%m-%d")
+            tomorrow = (current + timedelta(days=1)).strftime("%Y-%m-%d")
+            games_rep = fetch_schedule_for_date(day)
+            games_next = fetch_schedule_for_date(tomorrow)
+            finished = [g for g in games_rep if "FINAL" in (g.get("gameState") or g.get("status", {}).get("detailedState") or "").upper()]
+            box_map = build_boxscore_map_for_games(finished)
+            is_final_day = (current == end_dt)
+            generate_report(roster, scoring, day, finished, box_map, games_next, do_push=(do_push and is_final_day))
+            current += timedelta(days=1)
+        return
+
     rep_dt = datetime.strptime(rep_date, "%Y-%m-%d")
-    games_rep, games_next = fetch_schedule_for_date(rep_date), fetch_schedule_for_date((rep_dt + timedelta(days=1)).strftime("%Y-%m-%d"))
+    games_rep = fetch_schedule_for_date(rep_date)
+    games_next = fetch_schedule_for_date((rep_dt + timedelta(days=1)).strftime("%Y-%m-%d"))
     finished = [g for g in games_rep if "FINAL" in (g.get("gameState") or g.get("status", {}).get("detailedState") or "").upper()]
-    box_map = { (g.get("gamePk") or g.get("id")): parse_boxscore_for_players(fetch_boxscore(g.get("gamePk") or g.get("id"))) for g in finished }
-    generate_report(roster, scoring, rep_date, finished, box_map, games_next)
+    box_map = build_boxscore_map_for_games(finished)
+    generate_report(roster, scoring, rep_date, finished, box_map, games_next, do_push=do_push)
 
 if __name__ == "__main__":
     main()
