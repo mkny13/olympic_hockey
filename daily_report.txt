@@ -1,6 +1,6 @@
 ═══ CAMELOT CANIACS OLYMPIC UPDATE ═══
-Daily Report for 2026-02-18
-Last Updated: 2026-02-19 11:12 AM ET
+Daily Report for 2026-02-19
+Last Updated: 2026-02-20 11:12 AM ET
 
 YESTERDAY'S GAMES:
  (No completed games found)
@@ -53,15 +53,11 @@ Filip Gustavsson     | -                              |   0.0 |   2.0
 Shea Theodore        | -                              |   0.0 |   1.3
 Charlie McAvoy       | -                              |   0.0 |   0.4
 J.T. Miller          | -                              |   0.0 |   0.2
-Kirill Kaprizov      | -                              |   0.0 |   0.0
-Jason Robertson      | -                              |   0.0 |   0.0
 Alex Tuch            | -                              |   0.0 |   0.0
 Wyatt Johnston       | -                              |   0.0 |   0.0
 Josh Morrissey       | -                              |   0.0 |   0.0
-Mikhail Sergachev    | -                              |   0.0 |   0.0
 Matthew Tkachuk      | -                              |   0.0 |   0.0
 Jack Hughes          | -                              |   0.0 |   0.0
-Adam Fox             | -                              |   0.0 |   0.0
 
 Stankoven's Army — Daily: 0.0
 ---------------------------------------------------------------------------
@@ -88,15 +84,8 @@ Travis Sanheim       | -                              |   0.0 |   0.3
 Rasmus Andersson     | -                              |   0.0 |   0.2
 Colton Parayko       | -                              |   0.0 |   0.2
 Kyle Connor          | -                              |   0.0 |   0.0
-Alex DeBrincat       | -                              |   0.0 |   0.0
-Carter Verhaeghe     | -                              |   0.0 |   0.0
-Zach Hyman           | -                              |   0.0 |   0.0
 Quinn Hughes         | -                              |   0.0 |   0.0
-Darren Raddysh       | -                              |   0.0 |   0.0
-Spencer Knight       | -                              |   0.0 |   0.0
-John Gibson          | -                              |   0.0 |   0.0
 Logan Thompson       | -                              |   0.0 |   0.0
-Andrei Svechnikov    | -                              |   0.0 |   0.0
 Logan Cooley         | -                              |   0.0 |   0.0
 
 Tifftastic Voyagers — Daily: 0.0
@@ -110,10 +99,7 @@ Roman Josi           | -                              |   0.0 |   8.2
 Miro Heiskanen       | -                              |   0.0 |   6.9
 Devon Toews          | -                              |   0.0 |   3.5
 Jake Guentzel        | -                              |   0.0 |   2.8
-Alex Ovechkin        | -                              |   0.0 |   0.0
 Jackson LaCombe      | -                              |   0.0 |   0.0
-Igor Shesterkin      | -                              |   0.0 |   0.0
-Sergei Bobrovsky     | -                              |   0.0 |   0.0
 
 Tkachuk Norris — Daily: 0.0
 ---------------------------------------------------------------------------
@@ -126,7 +112,6 @@ Zach Werenski        | -                              |   0.0 |   4.2
 Sam Reinhart         | -                              |   0.0 |   1.6
 Seth Jarvis          | -                              |   0.0 |   1.5
 Sam Bennett          | -                              |   0.0 |   1.4
-Nikita Kucherov      | -                              |   0.0 |   0.0
 Chris Kreider        | -                              |   0.0 |   0.0
 
 Winos Chasing Ginos — Daily: 0.0
