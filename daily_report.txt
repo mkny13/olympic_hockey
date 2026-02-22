@@ -1,6 +1,6 @@
 ═══ CAMELOT CANIACS OLYMPIC UPDATE ═══
-Daily Report for 2026-02-20
-Last Updated: 2026-02-21 12:53 PM ET
+Daily Report for 2026-02-21
+Last Updated: 2026-02-22 11:12 AM ET
 
 YESTERDAY'S GAMES:
  - FIN (6) @ SVK (1) (FINAL)
@@ -14,16 +14,16 @@ TOP 5 STARS OF THE DAY:
 
 Stankoven's Army — Daily: 13.8
 ---------------------------------------------------------------------------
-Player               | Stats for Feb 20               | Daily | Total
-Jack Eichel          | 1G 1A 5S                       |   3.5 |  10.2
-Jordan Binnington    | W:1 SV:15 GA:2                 |   3.0 |  19.8
-Zach Werenski        | 0G 3A 0S                       |   3.0 |   7.2
-Sam Reinhart         | 1G 0A 2S 1PPP                  |   2.7 |   4.3
-Sam Bennett          | 0G 0A 2S                       |   0.2 |   1.6
-Seth Jarvis          | 0G 0A 1S                       |   0.1 |   1.6
-William Nylander     | -                              |   0.0 |   8.7
-Nick Suzuki          | 0G 0A 0S                       |   0.0 |   5.1
-Chris Kreider        | -                              |   0.0 |   0.0
+Player               | Stats for Feb 21               | Daily | Total
+Juuse Saros          | W:1 SV:30 GA:1                 |   8.0 |  30.4
+Roope Hintz          | 1G 1A 2S 1PPP                  |   3.7 |   6.9
+Sebastian Aho        | 1G 0A 1S                       |   2.1 |  11.5
+Connor McDavid       | -                              |   0.0 |  17.9
+Rasmus Dahlin        | -                              |   0.0 |   8.5
+Mitch Marner         | -                              |   0.0 |   7.9
+Nico Hischier        | -                              |   0.0 |   7.3
+Jake Walman          | -                              |   0.0 |   0.0
+Jake Oettinger       | -                              |   0.0 |   0.0
 
 Tifftastic Voyagers — Daily: 2.2
 ---------------------------------------------------------------------------
@@ -97,11 +97,17 @@ Tom Wilson           | -                              |   0.0 |   5.5
 Moritz Seider        | -                              |   0.0 |   3.5
 Shea Theodore        | -                              |   0.0 |   3.5
 Filip Gustavsson     | -                              |   0.0 |   2.0
+Charlie McAvoy       | -                              |   0.0 |   0.6
+J.T. Miller          | -                              |   0.0 |   0.3
+Kirill Kaprizov      | -                              |   0.0 |   0.0
+Jason Robertson      | -                              |   0.0 |   0.0
 Alex Tuch            | -                              |   0.0 |   0.0
 Wyatt Johnston       | -                              |   0.0 |   0.0
 Josh Morrissey       | -                              |   0.0 |   0.0
+Mikhail Sergachev    | -                              |   0.0 |   0.0
 Matthew Tkachuk      | -                              |   0.0 |   0.0
 Jack Hughes          | -                              |   0.0 |   0.0
+Adam Fox             | -                              |   0.0 |   0.0
 
 That's So Svech — Daily: 0.0
 ---------------------------------------------------------------------------
@@ -115,38 +121,30 @@ Travis Sanheim       | -                              |   0.0 |   1.6
 Rasmus Andersson     | -                              |   0.0 |   0.2
 Colton Parayko       | -                              |   0.0 |   0.2
 Kyle Connor          | -                              |   0.0 |   0.0
+Alex DeBrincat       | -                              |   0.0 |   0.0
+Carter Verhaeghe     | -                              |   0.0 |   0.0
+Zach Hyman           | -                              |   0.0 |   0.0
 Quinn Hughes         | -                              |   0.0 |   0.0
+Darren Raddysh       | -                              |   0.0 |   0.0
+Spencer Knight       | -                              |   0.0 |   0.0
+John Gibson          | -                              |   0.0 |   0.0
 Logan Thompson       | -                              |   0.0 |   0.0
+Andrei Svechnikov    | -                              |   0.0 |   0.0
 Logan Cooley         | -                              |   0.0 |   0.0
 
 Tkachuk Norris — Daily: 0.0
 ---------------------------------------------------------------------------
-Player               | Stats for Feb 20               | Daily | Total
-Anton Lundell        | 0G 0A 5S                       |   0.5 |   4.8
-Brock Faber          | 0G 0A 2S                       |   0.2 |   3.8
-Artturi Lehkonen     | 0G 0A 1S                       |   0.1 |   9.5
-Martin Necas         | -                              |   0.0 |  14.3
-Leon Draisaitl       | -                              |   0.0 |  11.4
-Mark Stone           | 0G 0A 0S                       |   0.0 |   8.0
-Erik Karlsson        | -                              |   0.0 |   5.6
-Joel Eriksson Ek     | -                              |   0.0 |   5.3
-Rickard Rakell       | -                              |   0.0 |   2.0
-Jeremy Swayman       | -                              |   0.0 |   1.6
-Brady Tkachuk        | -                              |   0.0 |   0.0
-Adam Larsson         | -                              |   0.0 |   0.0
-
-Tifftastic Voyagers — Daily: 0.6
----------------------------------------------------------------------------
-Player               | Stats for Feb 20               | Daily | Total
-Jake Guentzel        | 0G 0A 3S                       |   0.3 |   3.1
-Devon Toews          | 0G 0A 2S                       |   0.2 |   3.7
-Miro Heiskanen       | 0G 0A 1S                       |   0.1 |   7.0
-Lucas Raymond        | -                              |   0.0 |  11.9
-Mika Zibanejad       | -                              |   0.0 |  10.6
-David Pastrnak       | -                              |   0.0 |   9.1
-Sidney Crosby        | -                              |   0.0 |   9.0
-Roman Josi           | -                              |   0.0 |   8.2
-Jackson LaCombe      | -                              |   0.0 |   0.0
+Player               | Stats for Feb 21               | Daily | Total
+Jordan Binnington    | -                              |   0.0 |  19.8
+Jack Eichel          | -                              |   0.0 |  10.2
+William Nylander     | -                              |   0.0 |   8.7
+Zach Werenski        | -                              |   0.0 |   7.2
+Nick Suzuki          | -                              |   0.0 |   5.1
+Sam Reinhart         | -                              |   0.0 |   4.3
+Seth Jarvis          | -                              |   0.0 |   1.6
+Sam Bennett          | -                              |   0.0 |   1.6
+Nikita Kucherov      | -                              |   0.0 |   0.0
+Chris Kreider        | -                              |   0.0 |   0.0
 
 🏆 OVERALL STANDINGS:
  1. Stankoven's Army: 90.4
