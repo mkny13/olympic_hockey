@@ -52,11 +52,14 @@ def load_rosters(path: str) -> Dict[str, Dict[str, str]]:
         for row in reader:
             name = (row.get("Player") or "").strip()
             if not name: continue
+            olympic_team = (row.get("OlympicTeam") or "").strip()
+            if not olympic_team or olympic_team.upper().startswith("N/A"):
+                continue
             key = _norm(name)
             rosters[key] = {
                 "Player": name,
                 "FantasyTeam": (row.get("FantasyTeam") or "").strip(),
-                "OlympicTeam": (row.get("OlympicTeam") or "").strip(),
+                "OlympicTeam": olympic_team,
             }
     return rosters
 
@@ -65,6 +68,10 @@ def _norm(s: str) -> str:
     s2 = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode("ascii")
     s2 = re.sub(r"[^A-Za-z0-9\s]", "", s2)
     return " ".join(s2.strip().casefold().split())
+
+def _is_final_game(g: dict) -> bool:
+    state = (g.get("gameState") or g.get("status", {}).get("detailedState") or "").upper()
+    return "FINAL" in state
 
 def _try_get(url: str, params: dict | None = None) -> Any:
     for attempt in range(3):
@@ -101,6 +108,28 @@ def fetch_schedule_for_date(target_date: str) -> List[dict]:
 
 def fetch_boxscore(game_pk: int) -> dict | None:
     return api_get(f"gamecenter/{game_pk}/boxscore") or api_get(f"game/{game_pk}/boxscore")
+
+def fetch_next_hurricanes_game() -> dict | None:
+    data = _try_get("https://api-web.nhle.com/v1/club-schedule-season/CAR/20252026")
+    if not data:
+        return None
+    games = data.get("games", []) or []
+    now_utc = datetime.now(ZoneInfo("UTC"))
+    upcoming = []
+    for g in games:
+        start = g.get("startTimeUTC")
+        if not start:
+            continue
+        try:
+            dt = datetime.fromisoformat(start.replace("Z", "+00:00"))
+        except Exception:
+            continue
+        state = (g.get("gameState") or "").upper()
+        if dt >= now_utc and "FINAL" not in state:
+            upcoming.append((dt, g))
+    if upcoming:
+        return sorted(upcoming, key=lambda x: x[0])[0][1]
+    return None
 
 def fetch_play_by_play(game_pk: int) -> dict | None:
     data = api_get(f"gamecenter/{game_pk}/play-by-play")
@@ -355,6 +384,24 @@ def aggregate_by_player(rows: List[dict]) -> Dict[str, dict]:
             if k != "Player": agg[key][k] += int(r.get(k, 0))
     return agg
 
+def resolve_roster_key(norm: str, roster: Dict[str, Dict[str, str]]) -> str | None:
+    if norm in roster:
+        return norm
+    tokens = norm.split()
+    if not tokens:
+        return None
+    last = tokens[-1]
+    cands = [k for k in roster.keys() if (k.split() and k.split()[-1] == last)]
+    if len(cands) == 1:
+        return cands[0]
+    # Handle abbreviated first names from API payloads, e.g. "J. Hughes" => "j hughes".
+    first = tokens[0]
+    if len(first) == 1:
+        cands_i = [k for k in cands if (k.split() and k.split()[0].startswith(first))]
+        if len(cands_i) == 1:
+            return cands_i[0]
+    return None
+
 def load_totals_data(path: str) -> dict:
     if os.path.exists(path):
         try:
@@ -386,11 +433,7 @@ def generate_report(roster, scoring, report_date_str, finished_games, boxscore_m
             new_rows.extend(rows), new_game_ids.append(pk)
     
     for norm, stats in aggregate_by_player(new_rows).items():
-        match_key = norm if norm in roster else None
-        if not match_key:
-            last = norm.split()[-1] if norm.split() else ""
-            cands = [k for k in roster.keys() if k.endswith(f" {last}") or k == last]
-            if len(cands) == 1: match_key = cands[0]
+        match_key = resolve_roster_key(norm, roster)
         if match_key:
             total_scores[match_key] = total_scores.get(match_key, 0.0) + compute_points(stats, scoring)
 
@@ -402,17 +445,15 @@ def generate_report(roster, scoring, report_date_str, finished_games, boxscore_m
         player_entries[key] = {"Player": r["Player"], "FantasyTeam": r["FantasyTeam"], "Stats": {k: 0 for k in ("G", "A", "PPP", "SHP", "GWG", "HAT", "SOG", "HIT", "BLK", "W", "GA", "SV", "SO", "OTL")}, "DailyPts": 0.0, "TotalPts": total_scores.get(key, 0.0)}
 
     for norm, stats in daily_stats.items():
-        match_key = norm if norm in roster else None
-        if not match_key:
-            last = norm.split()[-1] if norm.split() else ""
-            cands = [k for k in roster.keys() if k.endswith(f" {last}") or k == last]
-            if len(cands) == 1: match_key = cands[0]
+        match_key = resolve_roster_key(norm, roster)
         if match_key:
             player_entries[match_key]["Stats"] = stats
             player_entries[match_key]["DailyPts"] = compute_points(stats, scoring)
 
-    write_text_report(list(player_entries.values()), finished_games, report_date_str, tomorrow_games_list)
-    write_html_report(list(player_entries.values()), finished_games, report_date_str, tomorrow_games_list)
+    report_players = [p for p in player_entries.values() if abs(float(p.get("TotalPts", 0.0))) > 1e-9]
+    next_canes_game = fetch_next_hurricanes_game()
+    write_text_report(report_players, finished_games, report_date_str, tomorrow_games_list, next_canes_game)
+    write_html_report(report_players, finished_games, report_date_str, tomorrow_games_list, next_canes_game)
     if do_push:
         push_to_github()
 
@@ -437,6 +478,15 @@ def format_game_time(utc_str: str) -> str:
         return dt_ny.strftime('%I:%M %p ET')
     except Exception: return utc_str
 
+def format_game_date(utc_str: str) -> str:
+    if not utc_str:
+        return "TBD"
+    try:
+        dt_ny = datetime.fromisoformat(utc_str.replace("Z", "+00:00")).astimezone(ZoneInfo("America/New_York"))
+        return dt_ny.strftime("%b %d, %Y")
+    except Exception:
+        return utc_str
+
 def format_stat_line(s: dict) -> str:
     """Returns a formatted string for stats, including bonus skater stats."""
     if s.get('SV') or s.get('W') or s.get('GA'):
@@ -458,12 +508,12 @@ def format_stat_line(s: dict) -> str:
         return f"{base} {' '.join(extras)}"
     return base
 
-def write_text_report(players, games, report_date_str, upcoming):
+def write_text_report(players, games, report_date_str, upcoming, next_canes_game):
     now_str = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %I:%M %p ET")
     short_date = datetime.strptime(report_date_str, "%Y-%m-%d").strftime("%b %d")
     header_col = f"Stats for {short_date}"
     
-    lines = ["═══ CAMELOT CANIACS OLYMPIC UPDATE ═══", f"Daily Report for {report_date_str}", f"Last Updated: {now_str}\n", "YESTERDAY'S GAMES:"]
+    lines = ["═══ CAMELOT CANIACS OLYMPIC UPDATE ═══", f"Daily Report for {report_date_str}", f"Last Updated: {now_str}\n", "TODAY'S GAMES:"]
     if not games: lines.append(" (No completed games found)")
     for g in games:
         away, home = g.get('awayTeam',{}).get('abbrev', "???"), g.get('homeTeam',{}).get('abbrev', "???")
@@ -482,14 +532,23 @@ def write_text_report(players, games, report_date_str, upcoming):
             
     standings = sorted([(t, sum(p['TotalPts'] for p in m)) for t, m in teams.items()], key=lambda x: -x[1])
     lines.extend(["\n🏆 OVERALL STANDINGS:",] + [f" {i}. {t}: {pts:.1f}" for i, (t, pts) in enumerate(standings, 1)])
-    lines.extend(["\nUPCOMING:",] + [f" - {g.get('awayTeam',{}).get('abbrev')} vs {g.get('homeTeam',{}).get('abbrev')} ({format_game_time(g.get('startTimeUTC'))})" for g in upcoming])
+    top_scorers = sorted(players, key=lambda x: (-x['TotalPts'], x['Player']))[:10]
+    lines.extend(["\n🔥 TOP TOURNAMENT SCORERS:"] + [f" {i}. {p['Player']} ({p['FantasyTeam']}): {p['TotalPts']:.1f}" for i, p in enumerate(top_scorers, 1)])
+
+    lines.append("\n🏒 NEXT GAME:")
+    if next_canes_game:
+        away = (next_canes_game.get('awayTeam') or {}).get('abbrev', '???')
+        home = (next_canes_game.get('homeTeam') or {}).get('abbrev', '???')
+        lines.append(f" - {away} @ {home} ({format_game_date(next_canes_game.get('startTimeUTC'))})")
+    else:
+        lines.append(" (Not found)")
     with open(REPORT_TXT, "w") as f: f.write("\n".join(lines))
 
-def write_html_report(players, games, report_date_str, upcoming):
+def write_html_report(players, games, report_date_str, upcoming, next_canes_game):
     now_str = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d %I:%M %p ET")
     short_date = datetime.strptime(report_date_str, "%Y-%m-%d").strftime("%b %d")
     
-    html = f"""<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Caniacs Update</title><style>:root{{--primary:#1a1a1a;--accent:#d32f2f;--bg:#f9f9f9;--card:#fff;--border:#e0e0e0}}body{{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--primary);margin:0;padding:20px}}.container{{max-width:800px;margin:0 auto}}header{{border-bottom:3px solid var(--primary);padding-bottom:15px;margin-bottom:25px}}h1{{margin:0;font-size:1.8rem}}.meta{{color:#666;font-size:.9rem}}.card{{background:var(--card);border-radius:8px;padding:15px;margin-bottom:20px;border:1px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,0.05)}}table{{width:100%;border-collapse:collapse;font-size:.95rem}}th,td{{padding:10px;border-bottom:1px solid var(--border);text-align:left}}th{{background:#f4f4f4}}.num{{text-align:right}}.team-h{{background:var(--primary);color:#fff;padding:10px 15px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;margin-top:25px}}.game-s{{font-weight:700}}</style></head><body><div class='container'><header><h1>Camelot Caniacs Olympic Update</h1><div class='meta'>Date: {report_date_str} &bull; Updated: {now_str}</div></header><section class='card'><h3>📅 Yesterday's Games</h3><ul>"""
+    html = f"""<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Caniacs Update</title><style>:root{{--primary:#1a1a1a;--accent:#d32f2f;--bg:#f9f9f9;--card:#fff;--border:#e0e0e0}}body{{font-family:-apple-system,sans-serif;background:var(--bg);color:var(--primary);margin:0;padding:20px}}.container{{max-width:800px;margin:0 auto}}header{{border-bottom:3px solid var(--primary);padding-bottom:15px;margin-bottom:25px}}h1{{margin:0;font-size:1.8rem}}.meta{{color:#666;font-size:.9rem}}.card{{background:var(--card);border-radius:8px;padding:15px;margin-bottom:20px;border:1px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,0.05)}}table{{width:100%;border-collapse:collapse;font-size:.95rem}}th,td{{padding:10px;border-bottom:1px solid var(--border);text-align:left}}th{{background:#f4f4f4}}.num{{text-align:right}}.team-h{{background:var(--primary);color:#fff;padding:10px 15px;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;margin-top:25px}}.game-s{{font-weight:700}}</style></head><body><div class='container'><header><h1>Camelot Caniacs Olympic Update</h1><div class='meta'>Date: {report_date_str} &bull; Updated: {now_str}</div></header><section class='card'><h3>📅 Today's Games</h3><ul>"""
     for g in (games or []): html += f"<li>{g.get('awayTeam',{}).get('abbrev')} <span class='game-s'>({g.get('awayTeam',{}).get('score',0)})</span> @ {g.get('homeTeam',{}).get('abbrev')} <span class='game-s'>({g.get('homeTeam',{}).get('score',0)})</span></li>"
     html += "</ul></section><section class='card' style='background:#fffde7'><h3>⭐ Top 5 Stars of the Day</h3><ol>"
     for p in sorted([p for p in players if p['DailyPts'] > 0], key=lambda x: -x['DailyPts'])[:5]: html += f"<li><b>{p['Player']}</b> ({p['FantasyTeam']}) — {p['DailyPts']:.1f} pts</li>"
@@ -504,8 +563,15 @@ def write_html_report(players, games, report_date_str, upcoming):
         html += "</table></div>"
     html += "<section class='card'><h3>🏆 Overall Standings</h3><ol>"
     for team, pts in sorted([(t, sum(p['TotalPts'] for p in m)) for t, m in teams.items()], key=lambda x: -x[1]): html += f"<li><b>{team}</b>: {pts:.1f}</li>"
-    html += "</ol></section><section class='card'><h3>📅 Upcoming Schedule</h3><ul>"
-    for g in (upcoming or []): html += f"<li>{g.get('awayTeam',{}).get('abbrev')} vs {g.get('homeTeam',{}).get('abbrev')} ({format_game_time(g.get('startTimeUTC'))})</li>"
+    html += "</ol></section><section class='card'><h3>🔥 Top Tournament Scorers</h3><ol>"
+    for p in sorted(players, key=lambda x: (-x['TotalPts'], x['Player']))[:10]: html += f"<li><b>{p['Player']}</b> ({p['FantasyTeam']}) — {p['TotalPts']:.1f}</li>"
+    html += "</ol></section><section class='card'><h3>🏒 Next Game</h3><ul>"
+    if next_canes_game:
+        away = (next_canes_game.get('awayTeam') or {}).get('abbrev', '???')
+        home = (next_canes_game.get('homeTeam') or {}).get('abbrev', '???')
+        html += f"<li>{away} @ {home} ({format_game_date(next_canes_game.get('startTimeUTC'))})</li>"
+    else:
+        html += "<li>Not found</li>"
     html += "</ul></section></div></body></html>"
     with open(REPORT_HTML, "w") as f: f.write(html)
 
@@ -557,19 +623,21 @@ def main():
             tomorrow = (current + timedelta(days=1)).strftime("%Y-%m-%d")
             games_rep = fetch_schedule_for_date(day)
             games_next = fetch_schedule_for_date(tomorrow)
-            finished = [g for g in games_rep if "FINAL" in (g.get("gameState") or g.get("status", {}).get("detailedState") or "").upper()]
+            finished = [g for g in games_rep if _is_final_game(g)]
+            upcoming = [g for g in games_rep if not _is_final_game(g)] or games_next
             box_map = build_boxscore_map_for_games(finished)
             is_final_day = (current == end_dt)
-            generate_report(roster, scoring, day, finished, box_map, games_next, do_push=(do_push and is_final_day))
+            generate_report(roster, scoring, day, finished, box_map, upcoming, do_push=(do_push and is_final_day))
             current += timedelta(days=1)
         return
 
     rep_dt = datetime.strptime(rep_date, "%Y-%m-%d")
     games_rep = fetch_schedule_for_date(rep_date)
     games_next = fetch_schedule_for_date((rep_dt + timedelta(days=1)).strftime("%Y-%m-%d"))
-    finished = [g for g in games_rep if "FINAL" in (g.get("gameState") or g.get("status", {}).get("detailedState") or "").upper()]
+    finished = [g for g in games_rep if _is_final_game(g)]
+    upcoming = [g for g in games_rep if not _is_final_game(g)] or games_next
     box_map = build_boxscore_map_for_games(finished)
-    generate_report(roster, scoring, rep_date, finished, box_map, games_next, do_push=do_push)
+    generate_report(roster, scoring, rep_date, finished, box_map, upcoming, do_push=do_push)
 
 if __name__ == "__main__":
     main()
