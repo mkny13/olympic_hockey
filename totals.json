@@ -1,14 +1,14 @@
 {
   "scores": {
-    "juraj slafkovsky": 14.7,
-    "anton lundell": 4.800000000000001,
-    "sebastian aho": 9.399999999999999,
-    "roope hintz": 3.2,
-    "eeli tolvanen": 2.7,
-    "artturi lehkonen": 9.5,
+    "juraj slafkovsky": 15.2,
+    "anton lundell": 5.000000000000001,
+    "sebastian aho": 11.499999999999998,
+    "roope hintz": 6.9,
+    "eeli tolvanen": 4.9,
+    "artturi lehkonen": 11.0,
     "mikko rantanen": 9.7,
-    "miro heiskanen": 7.0,
-    "juuse saros": 22.4,
+    "miro heiskanen": 9.2,
+    "juuse saros": 30.4,
     "filip forsberg": 3.8,
     "alexander wennberg": 0.30000000000000004,
     "joel eriksson ek": 5.3,
@@ -102,6 +102,7 @@
     2025090025,
     2025090026,
     2025090027,
-    2025090028
+    2025090028,
+    2025090029
   ]
 }
